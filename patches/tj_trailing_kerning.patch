@@ -1,0 +1,14 @@
+--- a/core/fpdfapi/page/cpdf_streamcontentparser.cpp
++++ b/core/fpdfapi/page/cpdf_streamcontentparser.cpp
+@@ -1442,7 +1442,10 @@
+       }
+     }
+   }
+-  AddTextObject(pdfium::span(strs).first(iSegment), kernings, fInitKerning);
++  // Only the segments in use: empty strings are skipped, so the kerning after
++  // the last non-empty one, as in [(word)-250 ()], still moves the position.
++  AddTextObject(pdfium::span(strs).first(iSegment),
++                pdfium::span(kernings).first(iSegment), fInitKerning);
+ }
+ 
+ void CPDF_StreamContentParser::Handle_SetTextLeading() {
